@@ -5,7 +5,7 @@ EX. NO: 1(C) AIM:
 
 IMPLEMENTATION OF HILL CIPHER
  
-## To write a C program to implement the hill cipher substitution techniques.
+## To write a python program to implement the hill cipher substitution techniques.
 
 ## DESCRIPTION:
 
@@ -28,8 +28,83 @@ STEP-1: Read the plain text and key from the user. STEP-2: Split the plain text 
 STEP-4: Multiply the two matrices to obtain the cipher text of length three.
 STEP-5: Combine all these groups to get the complete cipher text.
 
-## PROGRAM 
+# PROGRAM 
+import numpy as np
 
-## OUTPUT
+# Convert text to numbers
+def text_to_numbers(text):
+    return [ord(char) - ord('A') for char in text]
+
+# Convert numbers to text
+def numbers_to_text(numbers):
+    return ''.join(chr(num + ord('A')) for num in numbers)
+
+# Encrypt message
+def encrypt(plain_text, key_matrix):
+    n = len(key_matrix)
+    plain_text = plain_text.upper().replace(" ", "")
+
+    # Padding if needed
+    while len(plain_text) % n != 0:
+        plain_text += 'X'  
+    
+    numbers = text_to_numbers(plain_text)
+    encrypted_numbers = []
+    
+    # Apply matrix multiplication
+    for i in range(0, len(numbers), n):
+        block = np.array(numbers[i:i+n]).reshape(n, 1)
+        encrypted_block = np.dot(key_matrix, block) % 26
+        encrypted_numbers.extend(encrypted_block.flatten().tolist())
+
+    return numbers_to_text(encrypted_numbers)
+
+# Decrypt message
+def decrypt(cipher_text, key_matrix):
+    n = len(key_matrix)
+    numbers = text_to_numbers(cipher_text)
+
+    # Compute modular inverse of the key matrix
+    det = int(round(np.linalg.det(key_matrix)))  # Determinant
+    det_inv = pow(det, -1, 26)  # Modular inverse
+    
+    adjugate = np.round(det * np.linalg.inv(key_matrix)).astype(int) % 26
+    key_inv = (det_inv * adjugate) % 26
+
+    decrypted_numbers = []
+    
+    for i in range(0, len(numbers), n):
+        block = np.array(numbers[i:i+n]).reshape(n, 1)
+        decrypted_block = np.dot(key_inv, block) % 26
+        decrypted_numbers.extend(decrypted_block.flatten().tolist())
+
+    return numbers_to_text(decrypted_numbers)
+
+# Get user input
+plaintext = input("Enter the plaintext (only letters): ").upper().replace(" ", "")
+size = int(input("Enter the size of the key matrix (e.g., 2 for 2x2, 3 for 3x3): "))
+
+# Get the key matrix from user
+key_matrix = []
+print(f"Enter the {size}x{size} key matrix row by row (only integers):")
+for i in range(size):
+    row = list(map(int, input().split()))
+    key_matrix.append(row)
+
+key_matrix = np.array(key_matrix)
+
+# Encrypt and decrypt
+ciphertext = encrypt(plaintext, key_matrix)
+decrypted_text = decrypt(ciphertext, key_matrix)
+
+print("\nPlaintext:", plaintext)
+print("Ciphertext:", ciphertext)
+print("Decrypted Text:", decrypted_text)
+
+
+# OUTPUT
+![WhatsApp Image 2025-03-27 at 09 02 37_4f89765a](https://github.com/user-attachments/assets/4a715c6d-8d50-43f9-b4d3-19649ffe7129)
+
 
 ## RESULT
+# Thus we did hill cipher
