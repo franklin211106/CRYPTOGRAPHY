@@ -1,6 +1,10 @@
 # CRYPTOGRAPHY
 # EX.NO:3 
 # HILL CIPHER
+```
+NAME:FRANKLIN.F
+REG.NO:212224240041
+```
  
 ## AIM: To write a C program to implement the hill cipher substitution techniques.
 
